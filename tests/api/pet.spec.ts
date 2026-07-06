@@ -17,7 +17,8 @@ const baseUrlApi = process.env.BASE_URL_API;
 
 test.describe('POST /pet - addPet', () => {
 
-  test('TC-PET-01: creates a pet with all valid fields -> 200', async ({ request }) => {
+  test('TC-PET-01: Creates a pet with all valid fields -> 200', async ({ request }) => {
+    
     const pet = buildPet();
 
     const res = await request.post(`${baseUrlApi}/pet`, { data: pet });
