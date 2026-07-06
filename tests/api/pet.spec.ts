@@ -73,14 +73,14 @@ test.describe('PUT /pet — updatePet', () => {
     expect(body.name).toBe(updated.name);
     expect(body.status).toBe('sold');
   });
-  
+
 });
 
 
 test.describe('GET /pet/findByStatus — findPetsByStatus', () => {
 
   for (const status of ['available', 'pending', 'sold'] as const) {
-    test(`TC-PET-05: filter by status="${status}" -> 200, all items match`, async ({ request }) => {
+    test(`TC-PET-05: Filter by status="${status}" -> 200, all items match`, async ({ request }) => {
       const res = await request.get(`${baseUrlApi}/pet/findByStatus`, { params: { status } });
       expect(res.status()).toBe(200);
 
@@ -92,5 +92,25 @@ test.describe('GET /pet/findByStatus — findPetsByStatus', () => {
       }
     });
   }
+
+  test('TC-PET-06: Created pet appears in its status filter', async ({ request }) => {
+    
+    const pet = buildPet({ status: 'pending' });
+    await request.post(`${baseUrlApi}/pet`, { data: pet });
+
+    const res = await request.get(`${baseUrlApi}/pet/findByStatus`, { params: { status: 'pending' } });
+    const pets: Pet[] = await res.json();
+
+
+    let found = false;
+    for (let i = 0; i < pets.length; i++) {
+      if (pets[i].id === pet.id) {
+        found = true;
+        break;
+      }
+    }
+
+    expect(found).toBe(true);
+  });
 
 });
