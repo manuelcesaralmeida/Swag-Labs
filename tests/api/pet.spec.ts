@@ -145,7 +145,7 @@ test.describe('GET /pet/findByStatus — findPetsByStatus', () => {
   test.describe('DELETE /pet/{petId} - deletePet', () => {
 
     test('TC-PET-12: Deletes an existing pet -> 200, then GET returns 404', async ({ request }) => {
-      
+
       const pet = buildPet();
       await request.post(`${baseUrlApi}/pet`, { data: pet });
 
@@ -158,7 +158,7 @@ test.describe('GET /pet/findByStatus — findPetsByStatus', () => {
     });
 
     test('TC-PET-13: Deleting non-existing pet -> 404', async ({ request }) => {
-      
+
       const res = await request.delete(`${baseUrlApi}/pet/999999999999999`);
       expect(res.status()).toBe(404);
 
@@ -166,5 +166,37 @@ test.describe('GET /pet/findByStatus — findPetsByStatus', () => {
 
   });
 
+
+  test.describe('POST /pet/{petId}/uploadImage - uploadFile', () => {
+
+    test('TC-PET-14: uploads an image (multipart) -> 200 ApiResponse schema', async ({ request }) => {
+      const pet = buildPet();
+      await request.post(`${baseUrlApi}/pet`, { data: pet });
+
+      const res = await request.post(`${baseUrlApi}/pet/${pet.id}/uploadImage`, {
+        multipart: {
+          additionalMetadata: 'qa-upload',
+          file: {
+            name: 'photo.png',
+            mimeType: 'image/png',
+            // 1x1 transparent PNG
+            buffer: Buffer.from(
+              'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+              'base64'
+            ),
+          },
+        },
+      });
+      expect(res.status()).toBe(200);
+
+      // ApiResponse: { code, type, message }
+      const body = await res.json();
+      expect(body).toHaveProperty('code');
+      expect(body).toHaveProperty('message');
+      expect(String(body.message)).toContain('qa-upload');
+    });
+
+
+  });
 
 });
