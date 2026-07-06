@@ -43,7 +43,7 @@ export class CheckoutStepOnePage {
   }
 
   /** Fills the customer information */
-  async fillInformationAndContinue(info: CheckoutInfo) {
+  async fillInformation(info: CheckoutInfo) {
 
     await this.firstNameInput.fill(info.firstName);
     await this.lastNameInput.fill(info.lastName);
