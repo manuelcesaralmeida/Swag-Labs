@@ -22,7 +22,6 @@ test.describe('POST /pet - addPet', () => {
     const pet = buildPet();
 
     const res = await request.post(`${baseUrlApi}/pet`, { data: pet });
-
     expect(res.status()).toBe(200);
 
     const body: Pet = await res.json();
@@ -30,6 +29,7 @@ test.describe('POST /pet - addPet', () => {
     expect(body.name).toBe(pet.name);
     expect(body.status).toBe('available');
     expect(body.photoUrls).toEqual(pet.photoUrls);
+
   });
 
   test('TC-PET-02: Creates a pet with only required fields (name, photoUrls)', async ({ request }) => {
@@ -42,6 +42,18 @@ test.describe('POST /pet - addPet', () => {
     const body: Pet = await res.json();
     expect(body.name).toBe('minimal-pet');
     expect(body.id).toBeDefined();
+
   });
-  
+
+  test('TC-PET-03: Invalid payload (malformed json) -> 400/405/500', async ({ request }) => {
+
+    const res = await request.post(`${baseUrlApi}/pet`, {
+      headers: { 'Content-Type': 'application/json' },
+      data: 'invalid json-object',
+    });
+    // swagger declares 405 Invalid input; demo server returns 400/500 variants
+    expect([400, 405, 500]).toContain(res.status());
+
+  });
+
 });
