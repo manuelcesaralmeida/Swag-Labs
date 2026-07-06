@@ -21,7 +21,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('Login — Positive scenarios', () => {
 
-  test('TC-LOG-01: standard_user logs in successfully -> inventory page', async ({ page }) => {
+  test('TC-LOG-01: Standard_user logs in successfully -> inventory page', async ({ page }) => {
    
     await loginPage.login(STANDARD_USER, PASSWORD);
 
