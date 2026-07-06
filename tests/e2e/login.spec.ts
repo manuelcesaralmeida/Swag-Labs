@@ -19,7 +19,7 @@ test.beforeEach(async ({ page }) => {
 // Positive scenarios
 // ----------------------
 
-test.describe('Login — Positive scenarios', () => {
+test.describe('Login - Positive scenarios', () => {
 
   test('TC-LOG-01: Standard_user logs in successfully -> inventory page', async ({ page }) => {
    
