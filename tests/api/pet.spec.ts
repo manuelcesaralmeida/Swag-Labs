@@ -18,7 +18,7 @@ const baseUrlApi = process.env.BASE_URL_API;
 test.describe('POST /pet - addPet', () => {
 
   test('TC-PET-01: Creates a pet with all valid fields -> 200', async ({ request }) => {
-    
+
     const pet = buildPet();
 
     const res = await request.post(`${baseUrlApi}/pet`, { data: pet });
@@ -31,4 +31,17 @@ test.describe('POST /pet - addPet', () => {
     expect(body.status).toBe('available');
     expect(body.photoUrls).toEqual(pet.photoUrls);
   });
+
+  test('TC-PET-02: Creates a pet with only required fields (name, photoUrls)', async ({ request }) => {
+
+    const res = await request.post(`${baseUrlApi}/pet`, {
+      data: { name: 'minimal-pet', photoUrls: ['https://picsum.photos/200/300'] },
+    });
+    expect(res.status()).toBe(200);
+
+    const body: Pet = await res.json();
+    expect(body.name).toBe('minimal-pet');
+    expect(body.id).toBeDefined();
+  });
+  
 });
