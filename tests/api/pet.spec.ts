@@ -75,3 +75,22 @@ test.describe('PUT /pet — updatePet', () => {
   });
   
 });
+
+
+test.describe('GET /pet/findByStatus — findPetsByStatus', () => {
+
+  for (const status of ['available', 'pending', 'sold'] as const) {
+    test(`TC-PET-05: filter by status="${status}" -> 200, all items match`, async ({ request }) => {
+      const res = await request.get(`${baseUrlApi}/pet/findByStatus`, { params: { status } });
+      expect(res.status()).toBe(200);
+
+      const pets: Pet[] = await res.json();
+      expect(Array.isArray(pets)).toBe(true);
+      // every returned pet must have the requested status
+      for (const p of pets.slice(0, 50)) {
+        expect(p.status).toBe(status);
+      }
+    });
+  }
+
+});
