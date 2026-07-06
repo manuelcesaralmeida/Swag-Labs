@@ -142,4 +142,29 @@ test.describe('GET /pet/findByStatus — findPetsByStatus', () => {
 
   });
 
+  test.describe('DELETE /pet/{petId} - deletePet', () => {
+
+    test('TC-PET-12: Deletes an existing pet -> 200, then GET returns 404', async ({ request }) => {
+      
+      const pet = buildPet();
+      await request.post(`${baseUrlApi}/pet`, { data: pet });
+
+      const del = await request.delete(`${baseUrlApi}/pet/${pet.id}`);
+      expect(del.status()).toBe(200);
+
+      const after = await request.get(`${baseUrlApi}/pet/${pet.id}`);
+      expect(after.status()).toBe(404);
+
+    });
+
+    test('TC-PET-13: Deleting non-existing pet -> 404', async ({ request }) => {
+      
+      const res = await request.delete(`${baseUrlApi}/pet/999999999999999`);
+      expect(res.status()).toBe(404);
+
+    });
+
+  });
+
+
 });
