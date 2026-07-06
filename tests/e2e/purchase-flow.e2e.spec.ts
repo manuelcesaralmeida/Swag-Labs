@@ -22,7 +22,6 @@ test.beforeEach(async ({ page }) => {
 });
 
 
-
 test.describe('E2E - Purchase All Products', () => {
 
     test('TC-E2E-01: Select all 6 products, validate names/prices, validate checkout total', async ({ page }) => {
@@ -30,7 +29,6 @@ test.describe('E2E - Purchase All Products', () => {
         // 1. Login
         const loginPage = new LoginPage(page);
         await loginPage.goto();
-        // await loginPage.login('standard_user', 'secret_sauce');
         await loginPage.login(STANDARD_USER, PASSWORD);
 
         // 2. Inventory - Add ALL products, capturing name + price
@@ -59,7 +57,6 @@ test.describe('E2E - Purchase All Products', () => {
         // 5 Click on Continue button
         await stepOne.clickContinueButton()
 
-
         // 6. Overview - Validate total = sum of selected products (+ tax)
         const stepTwo = new CheckoutStepTwoPage(page);
         await stepTwo.expectLoaded();
@@ -71,7 +68,6 @@ test.describe('E2E - Purchase All Products', () => {
         const completePage = new CheckoutCompletePage(page);
         await completePage.expectOrderConfirmed();
     });
-
 });
 
 test.describe('E2E - Purchase with Product Removal', () => {
@@ -80,7 +76,6 @@ test.describe('E2E - Purchase with Product Removal', () => {
         // 1. Login
         const loginPage = new LoginPage(page);
         await loginPage.goto();
-        // await loginPage.login('standard_user', 'secret_sauce');
         await loginPage.login(STANDARD_USER, PASSWORD);
 
         // 2. Inventory - Add ALL 6 products, capturing name + price
