@@ -94,7 +94,7 @@ test.describe('GET /pet/findByStatus — findPetsByStatus', () => {
   }
 
   test('TC-PET-06: Created pet appears in its status filter', async ({ request }) => {
-    
+
     const pet = buildPet({ status: 'pending' });
     await request.post(`${baseUrlApi}/pet`, { data: pet });
 
@@ -111,6 +111,35 @@ test.describe('GET /pet/findByStatus — findPetsByStatus', () => {
     }
 
     expect(found).toBe(true);
+  });
+
+
+  test.describe('GET /pet/{petId} — getPetById', () => {
+
+    test('TC-PET-08: Fetches an existing pet by id → 200 with correct schema', async ({ request }) => {
+      const pet = buildPet();
+      await request.post(`${baseUrlApi}/pet`, { data: pet });
+
+      const res = await request.get(`${baseUrlApi}/pet/${pet.id}`);
+      expect(res.status()).toBe(200);
+
+      const body: Pet = await res.json();
+      expect(body).toMatchObject({ id: pet.id, name: pet.name });
+      expect(body).toHaveProperty('photoUrls');
+    });
+
+    test('TC-PET-09: Non-existing pet id -> 404 Pet not found', async ({ request }) => {
+
+      const res = await request.get(`${baseUrlApi}/pet/999999999999999`);
+      expect(res.status()).toBe(404);
+
+    });
+
+    test('TC-PET-10: Invalid (non-integer) pet id -> 404/400', async ({ request }) => {
+      const res = await request.get(`${baseUrlApi}/pet/not-a-number`);
+      expect([400, 404]).toContain(res.status());
+    });
+
   });
 
 });
