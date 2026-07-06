@@ -1,0 +1,22 @@
+{
+  "name": "swag-labs",
+  "version": "1.0.0",
+  "description": "Swag Labs",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manuelcesaralmeida/Swag-Labs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/manuelcesaralmeida/Swag-Labs/issues"
+  },
+  "homepage": "https://github.com/manuelcesaralmeida/Swag-Labs#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.1.0"
+  }
+}
