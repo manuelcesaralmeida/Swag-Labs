@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { buildPet, Pet } from '../../helpers/testData';
+import { buildPet, Pet } from '../../helpers/test_data';
 
 const baseUrlApi = process.env.BASE_URL_API;
 
@@ -17,7 +17,7 @@ const baseUrlApi = process.env.BASE_URL_API;
 
 test.describe('POST /pet — addPet', () => {
 
-  test('TC-PET-01: creates a pet with all valid fields → 200 and echoes body', async ({ request }) => {
+  test('TC-PET-01: creates a pet with all valid fields -> 200', async ({ request }) => {
     const pet = buildPet();
 
     const res = await request.post(`${baseUrlApi}/pet`, { data: pet });
