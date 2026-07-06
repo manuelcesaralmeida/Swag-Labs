@@ -57,3 +57,21 @@ test.describe('POST /pet - addPet', () => {
   });
 
 });
+
+
+test.describe('PUT /pet — updatePet', () => {
+
+  test('TC-PET-04: Updates an existing pet name and status -> 200', async ({ request }) => {
+    const pet = buildPet();
+    await request.post(`${baseUrlApi}/pet`, { data: pet });
+
+    const updated = { ...pet, name: `${pet.name}-renamed`, status: 'sold' as const };
+    const res = await request.put(`${baseUrlApi}/pet`, { data: updated });
+    expect(res.status()).toBe(200);
+
+    const body: Pet = await res.json();
+    expect(body.name).toBe(updated.name);
+    expect(body.status).toBe('sold');
+  });
+  
+});
