@@ -27,7 +27,6 @@ test.describe('Login — positive scenarios', () => {
     inventoryPage= new InventoryPage(page);
     await inventoryPage.expectLoaded();
 
-
   });
 
 
