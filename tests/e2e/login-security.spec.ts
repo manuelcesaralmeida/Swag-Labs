@@ -21,7 +21,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('E2E - Negative scenarios + access control: Login security', () => {
 
-    test('TEST — Login security: locked user, invalid credentials, protected route access', async ({ page }) => {
+    test('TC-LOGIN-SECURITY-01: Login security: locked user, invalid credentials, protected route access', async ({ page }) => {
 
         const loginPage = new LoginPage(page);
         await loginPage.goto();
