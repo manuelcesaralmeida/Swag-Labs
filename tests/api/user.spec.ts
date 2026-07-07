@@ -36,7 +36,7 @@ test.describe('POST /user/createWithList - createUsersWithListInput', () => {
     expect(res.status()).toBe(200);
  
     // verify first user exists
-    const check = await request.get(`/user/${users[0].username}`);
+    const check = await request.get(`${baseUrlApi}/user/${users[0].username}`);
     expect(check.status()).toBe(200);
   });
 
