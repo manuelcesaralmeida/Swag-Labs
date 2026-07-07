@@ -76,3 +76,40 @@ test.describe('POST /store/order - placeOrder', () => {
   });
 
 });
+
+
+test.describe('GET /store/order/{orderId} — getOrderById', () => {
+ 
+  test('TC-STORE-05: fetch order in valid range (1-10) -> 200', async ({ request }) => {
+
+    await request.post(`${baseUrlApi}/store/order`, { data: buildOrder(1, { id: 5 }) });
+ 
+    const res = await request.get(`${baseUrlApi}/store/order/5`);
+    expect(res.status()).toBe(200);
+ 
+    const body: Order = await res.json();
+    expect(body.id).toBe(5);
+
+  });
+ 
+  test('TC-STORE-06: orderId above maximum (11) -> 404/400 (swagger max=10)', async ({ request }) => {
+
+    const res = await request.get(`${baseUrlApi}/store/order/11`);
+    expect([400, 404]).toContain(res.status());
+  });
+ 
+  test('TC-STORE-07: orderId below minimum (0) -> 404/400 (swagger min=1)', async ({ request }) => {
+
+    const res = await request.get(`${baseUrlApi}/store/order/0`);
+    expect([400, 404]).toContain(res.status());
+
+  });
+ 
+  test('TC-STORE-08: non-integer orderId -> 404/400', async ({ request }) => {
+
+    const res = await request.get(`${baseUrlApi}/store/order/abc`);
+    expect([400, 404]).toContain(res.status());
+
+  });
+
+});
