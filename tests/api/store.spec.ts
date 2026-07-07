@@ -79,37 +79,66 @@ test.describe('POST /store/order - placeOrder', () => {
 
 
 test.describe('GET /store/order/{orderId} — getOrderById', () => {
- 
+
   test('TC-STORE-05: fetch order in valid range (1-10) -> 200', async ({ request }) => {
 
     await request.post(`${baseUrlApi}/store/order`, { data: buildOrder(1, { id: 5 }) });
- 
+
     const res = await request.get(`${baseUrlApi}/store/order/5`);
     expect(res.status()).toBe(200);
- 
+
     const body: Order = await res.json();
     expect(body.id).toBe(5);
 
   });
- 
+
   test('TC-STORE-06: orderId above maximum (11) -> 404/400 (swagger max=10)', async ({ request }) => {
 
     const res = await request.get(`${baseUrlApi}/store/order/11`);
     expect([400, 404]).toContain(res.status());
   });
- 
+
   test('TC-STORE-07: orderId below minimum (0) -> 404/400 (swagger min=1)', async ({ request }) => {
 
     const res = await request.get(`${baseUrlApi}/store/order/0`);
     expect([400, 404]).toContain(res.status());
 
   });
- 
+
   test('TC-STORE-08: non-integer orderId -> 404/400', async ({ request }) => {
 
     const res = await request.get(`${baseUrlApi}/store/order/abc`);
     expect([400, 404]).toContain(res.status());
 
+  });
+
+});
+
+
+test.describe('DELETE /store/order/{orderId} - deleteOrder', () => {
+
+  test('TC-STORE-09: Deletes existing order -> 200, then GET 404', async ({ request }) => {
+
+    await request.post(`${baseUrlApi}/store/order`, { data: buildOrder(1, { id: 7 }) });
+
+    const del = await request.delete(`${baseUrlApi}/store/order/7`);
+    expect(del.status()).toBe(200);
+
+    const after = await request.get(`${baseUrlApi}/store/order/7`);
+    expect(after.status()).toBe(404);
+    
+  });
+
+  test('TC-STORE-10: Negative orderId -> 400/404 (swagger: negative values generate errors)', async ({ request }) => {
+
+    const res = await request.delete(`${baseUrlApi}/store/order/-1`);
+    expect([400, 404]).toContain(res.status());
+  });
+
+  test('TC-STORE-11: Non-integer orderId -> 400/404', async ({ request }) => {
+
+    const res = await request.delete(`${baseUrlApi}/store/order/11/abc`);
+    expect([400, 404]).toContain(res.status());
   });
 
 });
