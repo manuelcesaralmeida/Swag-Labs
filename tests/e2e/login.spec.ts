@@ -111,7 +111,6 @@ test.describe('Login - Negative scenarios', () => {
 
 });
 
-
 // -----------------------
 // Error message behaviour
 // -----------------------
