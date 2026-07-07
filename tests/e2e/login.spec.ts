@@ -22,9 +22,9 @@ test.beforeEach(async ({ page }) => {
   await loginPage.goto();
 });
 
-// ----------------------
+// -----------------------
 // Positive scenarios
-// ----------------------
+// -----------------------
 
 test.describe('Login - Positive scenarios', () => {
 
