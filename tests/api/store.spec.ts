@@ -4,11 +4,12 @@ import { buildPet, buildOrder, Order } from '../../helpers/test_data';
 
 const baseUrlApi = process.env.BASE_URL_API;
 
-
 /**
  * Swagger tag: store
  * GET    /store/inventory          getInventory
  * POST   /store/order              placeOrder
+ * GET    /store/order/{orderId}    getOrderById  (valid ids: 1-10)
+ * DELETE /store/order/{orderId}    deleteOrder   (positive ids only)
  */
 
 test.describe('GET /store/inventory - getInventory', () => {

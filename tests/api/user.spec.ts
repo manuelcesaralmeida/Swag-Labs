@@ -29,15 +29,27 @@ test.describe('POST /user - createUser', () => {
 });
 
 test.describe('POST /user/createWithList - createUsersWithListInput', () => {
- 
+
   test('TC-USER-03: Creates multiple users from list -> 200', async ({ request }) => {
     const users = [buildUser(), buildUser()];
     const res = await request.post(`${baseUrlApi}/user/createWithList`, { data: users });
     expect(res.status()).toBe(200);
- 
+
     // verify first user exists
     const check = await request.get(`${baseUrlApi}/user/${users[0].username}`);
     expect(check.status()).toBe(200);
   });
 
+});
+
+
+test.describe('POST /user/createWithArray - createUsersWithArrayInput', () => {
+
+  test('TC-USER-04: Creates multiple users from array -> 200', async ({ request }) => {
+
+    const users = [buildUser(), buildUser()];
+    const res = await request.post(`${baseUrlApi}/user/createWithArray`, { data: users });
+    expect(res.status()).toBe(200);
+
+  });
 });
