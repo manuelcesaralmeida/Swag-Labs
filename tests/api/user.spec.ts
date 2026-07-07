@@ -25,14 +25,14 @@ test.describe('POST /user - createUser', () => {
     expect(body.email).toBe(user.email);
     expect(body.firstName).toBe(user.firstName);
   });
-  
+
 });
 
 test.describe('POST /user/createWithList - createUsersWithListInput', () => {
  
   test('TC-USER-03: Creates multiple users from list -> 200', async ({ request }) => {
     const users = [buildUser(), buildUser()];
-    const res = await request.post('/user/createWithList', { data: users });
+    const res = await request.post(`${baseUrlApi}/user/createWithList`, { data: users });
     expect(res.status()).toBe(200);
  
     // verify first user exists
