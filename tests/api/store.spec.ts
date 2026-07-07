@@ -66,7 +66,7 @@ test.describe('POST /store/order - placeOrder', () => {
 
   });
 
-  test('TC-STO-04: malformed body -> 400/500', async ({ request }) => {
+  test('TC-STORE-04: malformed body -> 400/500', async ({ request }) => {
 
     const res = await request.post(`${baseUrlApi}/store/order`, {
       headers: { 'Content-Type': 'application/json' },
