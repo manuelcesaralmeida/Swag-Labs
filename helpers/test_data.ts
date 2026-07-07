@@ -43,7 +43,7 @@ export interface User {
   userStatus?: number;
 }
 
-// ── Factories ────────────────────────────────────────────c
+
 /** Unique-ish id to avoid collisions on the shared demo server */
 export function uniqueId(): number {
   return Date.now() % 1_000_000_000 + Math.floor(Math.random() * 1000);
@@ -59,5 +59,20 @@ export function buildPet(overrides: Partial<Pet> = {}): Pet {
     status: 'available',
     ...overrides,
   };
+
 }
 
+export function buildUser(overrides: Partial<User> = {}): User {
+  const ts = Date.now();
+  return {
+    id: uniqueId(),
+    username: `qa-user-${ts}`,
+    firstName: 'QA',
+    lastName: 'Tester',
+    email: `qa-${ts}@test.com`,
+    password: 'Secret123!',
+    phone: '+351910000000',
+    userStatus: 1,
+    ...overrides,
+  };
+}
