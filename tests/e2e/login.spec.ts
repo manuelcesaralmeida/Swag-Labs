@@ -110,3 +110,29 @@ test.describe('Login - Negative scenarios', () => {
 
 
 });
+
+// -----------------------
+// Error message behaviour
+// -----------------------
+test.describe('Login - Error message behaviour', () => {
+
+  test('TC-LOGIN-11: Error message can be dismissed with X button', async () => {
+   
+    await loginPage.login(LOCKED_OUT_USER, PASSWORD);
+    await expect(loginPage.errorMessage).toBeVisible();
+
+    await loginPage.errorCloseButton.click();
+    await expect(loginPage.errorMessage).toBeHidden();
+  });
+
+  test('TC-LOGIN-12: After failed login, retry with valid credentials succeeds', async ({ page }) => {
+    
+    // fail first
+    await loginPage.login(STANDARD_USER, 'wrong_password');
+    await expect(loginPage.errorMessage).toBeVisible();
+
+    await loginPage.login(STANDARD_USER, PASSWORD);
+
+    await expect(page).toHaveURL(INVENTORY_URL);
+  });
+});
