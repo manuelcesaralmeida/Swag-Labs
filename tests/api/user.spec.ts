@@ -25,6 +25,7 @@ test.describe('POST /user - createUser', () => {
     expect(body.email).toBe(user.email);
     expect(body.firstName).toBe(user.firstName);
   });
+  
 });
 
 test.describe('POST /user/createWithList - createUsersWithListInput', () => {
@@ -38,5 +39,5 @@ test.describe('POST /user/createWithList - createUsersWithListInput', () => {
     const check = await request.get(`/user/${users[0].username}`);
     expect(check.status()).toBe(200);
   });
-  
+
 });
