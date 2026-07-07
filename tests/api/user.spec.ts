@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { buildUser, User } from '../../helpers/test_data';
 
 const baseUrlApi = process.env.BASE_URL_API;
-
+const GHOST_USER = process.env.GHOST_USER;
 
 
 test.describe('POST /user - createUser', () => {
@@ -52,4 +52,33 @@ test.describe('POST /user/createWithArray - createUsersWithArrayInput', () => {
     expect(res.status()).toBe(200);
 
   });
+
+});
+
+
+test.describe('GET /user/{username} - getUserByName', () => {
+ 
+  test('TC-USER-05: Existing user returns 200 with correct schema', async ({ request }) => {
+
+    const user = buildUser();
+    await request.post(`${baseUrlApi}/user`, { data: user });
+ 
+    const res = await request.get(`${baseUrlApi}/user/${user.username}`);
+    expect(res.status()).toBe(200);
+ 
+    const body: User = await res.json();
+    expect(body.username).toBe(user.username);
+    expect(body).toHaveProperty('id');
+    expect(body).toHaveProperty('email');
+
+  });
+ 
+  test('TC-USER-06: Non-existing username -> 404', async ({ request }) => {
+
+    // const res = await request.get(`${baseUrlApi}/user/ghost-user-${Date.now()}`);
+    const res = await request.get(`${baseUrlApi}/user/${GHOST_USER}-${Date.now()}`);
+    expect(res.status()).toBe(404);
+
+  });
+
 });
