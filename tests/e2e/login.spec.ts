@@ -8,10 +8,10 @@ const PROBLEM_USER = process.env.PROBLEM_USER;
 const PERFORMANCE_GLITCH_USER = process.env.PERFORMANCE_GLITCH_USER;
 const ERROR_USER = process.env.ERROR_USER;
 const VISUAL_USER = process.env.VISUAL_USER;
+const LOCKED_OUT_USER = process.env.LOCKED_OUT_USER;
+const GHOST_USER = process.env.GHOST_USER;
 
 const INVENTORY_URL = /.*inventory\.html/;
-
-
 
 let loginPage: LoginPage;
 let inventoryPage: InventoryPage;
@@ -69,5 +69,44 @@ test.describe('Login - Positive scenarios', () => {
     await expect(page).toHaveURL(INVENTORY_URL);
 
   });
+
+});
+
+
+// -----------------------
+// Positive scenarios
+// -----------------------
+
+test.describe('Login - Negative scenarios', () => {
+
+  test('TC-LOGIN-06: locked_out_user -> locked out error', async () => {
+    await loginPage.login(LOCKED_OUT_USER, PASSWORD);
+    await loginPage.expectError('Sorry, this user has been locked out.');
+  });
+
+  test('TC-LOGIN-07: wrong password -> credentials do not match error', async () => {
+    await loginPage.login(STANDARD_USER, 'wrong_password');
+    await loginPage.expectError(
+      'Username and password do not match any user in this service'
+    );
+  });
+
+  test('TC-LOGIN-08: non-existing username -> credentials do not match error', async () => {
+    await loginPage.login(GHOST_USER, PASSWORD);
+    await loginPage.expectError(
+      'Username and password do not match any user in this service'
+    );
+  });
+
+  test('TC-LOGIN-09: empty username -> Username is required', async () => {
+    await loginPage.login('', PASSWORD);
+    await loginPage.expectError('Username is required');
+  });
+
+  test('TC-LOGIN-10: empty password-> Password is required', async () => {
+    await loginPage.login(STANDARD_USER, '');
+    await loginPage.expectError('Password is required');
+  });
+
 
 });
