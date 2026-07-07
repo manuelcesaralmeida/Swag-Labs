@@ -62,6 +62,18 @@ export function buildPet(overrides: Partial<Pet> = {}): Pet {
 
 }
 
+export function buildOrder(petId: number, overrides: Partial<Order> = {}): Order {
+  return {
+    id: Math.floor(Math.random() * 9) + 1, // swagger valid range: 1-10
+    petId,
+    quantity: 1,
+    shipDate: new Date().toISOString(),
+    status: 'placed',
+    complete: false,
+    ...overrides,
+  };
+}
+
 export function buildUser(overrides: Partial<User> = {}): User {
   const ts = Date.now();
   return {
