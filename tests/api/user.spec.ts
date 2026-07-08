@@ -5,6 +5,18 @@ const baseUrlApi = process.env.BASE_URL_API;
 const GHOST_USER = process.env.GHOST_USER;
 
 
+/**
+ * Swagger tag: user
+ * POST   /user                   createUser
+ * POST   /user/createWithList    createUsersWithListInput
+ * POST   /user/createWithArray   createUsersWithArrayInput
+ * GET    /user/{username}        getUserByName
+ * PUT    /user/{username}        updateUser
+ * DELETE /user/{username}        deleteUser
+ * GET    /user/login             loginUser
+ * GET    /user/logout            logoutUser
+ */
+
 test.describe('POST /user - createUser', () => {
 
   test('TC-USER-01: Creates a user -> 200 default operation', async ({ request }) => {
@@ -153,6 +165,17 @@ test.describe('GET /user/login - loginUser', () => {
   test('TC-USER-11: missing required params -> 400 or demo 200', async ({ request }) => {
     const res = await request.get(`${baseUrlApi}/user/login`);
     expect([200, 400]).toContain(res.status());
+  });
+
+});
+
+
+test.describe('GET /user/logout - logoutUser', () => {
+ 
+  test('TC-USER-12: Logout -> 200 default successful operation', async ({ request }) => {
+
+    const res = await request.get(`${baseUrlApi}/user/logout`);
+    expect(res.status()).toBe(200);
   });
 
 });
