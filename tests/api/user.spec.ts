@@ -4,7 +4,6 @@ import { buildUser, User } from '../../helpers/test_data';
 const baseUrlApi = process.env.BASE_URL_API;
 const GHOST_USER = process.env.GHOST_USER;
 
-
 /**
  * Swagger tag: user
  * POST   /user                   createUser
