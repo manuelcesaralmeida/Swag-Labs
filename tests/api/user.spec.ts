@@ -168,7 +168,6 @@ test.describe('GET /user/login - loginUser', () => {
 
 });
 
-
 test.describe('GET /user/logout - logoutUser', () => {
  
   test('TC-USER-12: Logout -> 200 default successful operation', async ({ request }) => {
