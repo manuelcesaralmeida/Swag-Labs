@@ -1,22 +1,28 @@
 # Petstore API — Playwright Test Suite
 
-Automated API test suite for the [Swagger Petstore v2](https://petstore.swagger.io/) built with **Playwright** and **TypeScript**.
+Automated E2E test suite for [Swag Labs](https://www.saucedemo.com/) built with **Playwright + TypeScript** using the **Page Object Model**.
+
+Repository: [https://github.com/manuelcesaralmeida/Swag-Labs](https://github.com/manuelcesaralmeida/Swag-Labs)
 
 ---
 
 ## Project structure
 
 ```
-petstore-api-playwright/
-  helpers/
-    testData.ts          ← TypeScript types + factories (buildPet, buildOrder, buildUser)
+Swag-Labs/
+  pages/
+    login_page.ts
+    inventory_page.ts
+    cart_page.ts
+    checkout_step_one_page.ts
+    checkout_step_two_page.ts
+    checkout_complete_page.ts
   tests/
-    pet.spec.ts          ← 15 test cases — 8 endpoints (pet tag)
-    store.spec.ts        ← 11 test cases — 4 endpoints (store tag)
-    user.spec.ts         ← 12 test cases — 8 endpoints (user tag)
-  playwright.config.ts   ← base URL, headers, retries, reporters
-  package.json
-  README.md
+    e2e/
+      login-security.spec.ts        ← 1 test case (negative + access control)
+      purchase-flow.e2e.spec.ts     ← 2 test cases (E2E purchase flows)
+  playwright.config.ts
+  .env                              ← credentials and base URL (not committed)
 ```
 
 ---
@@ -26,6 +32,20 @@ petstore-api-playwright/
 ```bash
 npm install
 npx playwright install chromium   # only needed if running UI reports
+```
+
+---
+
+Create a `.env` file at the root:
+
+```env
+BASE_URL=https://www.saucedemo.com
+STANDARD_USER=standard_user
+LOCKED_OUT_USER=locked_out_user
+PASSWORD=secret_sauce
+FIRST_NAME=Cesar
+LAST_NAME=Almeida
+POSTAL_CODE=4430-381
 ```
 
 ---
@@ -40,6 +60,8 @@ npx playwright test
 npx playwright test tests/pet.spec.ts
 npx playwright test tests/store.spec.ts
 npx playwright test tests/user.spec.ts
+npx playwright test tests/e2e/login-security.spec.ts
+npx playwright test tests/e2e/purchase-flow.e2e.spec.ts
 
 # open HTML report after run
 npx playwright show-report
@@ -119,7 +141,76 @@ npx playwright show-report
 
 ---
 
+---
+
+## Test specifications
+
+### `tests/e2e/login-security.spec.ts`
+
+**E2E — Negative scenarios + access control: Login security**
+
+| TC | Test case | Steps | Expected result |
+|---|---|---|---|
+| TC-LOGIN-SECURITY-01 | Login security: locked user, invalid credentials, protected route access | 1. Login with `locked_out_user` + valid password | Error: *"Sorry, this user has been locked out."* |
+| | | 2. Login with `standard_user` + wrong password | Error: *"Username and password do not match any user in this service"* |
+| | | 3. Navigate directly to `/inventory.html` without session | Redirect to base URL with error: *"You can only access '/inventory.html' when you are logged in"* |
+| | | 4. Login with valid `standard_user` credentials | Inventory page loads correctly |
+
+---
+
+### `tests/e2e/purchase-flow.e2e.spec.ts`
+
+**E2E — Purchase All Products**
+
+| TC | Test case | Steps | Expected result |
+|---|---|---|---|
+| TC-E2E-01 | Select all 6 products, validate names/prices, validate checkout total | 1. Login with `standard_user` | Inventory page loads |
+| | | 2. Add all 6 products (capturing name + price dynamically) | Cart badge = 6 |
+| | | 3. Navigate to cart — validate every product name and price | All 6 products present with correct prices |
+| | | 4. Proceed to checkout — fill customer information | Form accepted |
+| | | 5. Overview — validate subtotal = Σ product prices, total = subtotal + tax | Math validation passes |
+| | | 6. Finish order | *"Thank you for your order!"* confirmation |
+
+**E2E — Purchase with Product Removal**
+
+| TC | Test case | Steps | Expected result |
+|---|---|---|---|
+| TC-E2E-02 | Select all 6 products, remove 3rd and 5th, validate names/prices, validate checkout total | 1. Login with `standard_user` | Inventory page loads |
+| | | 2. Add all 6 products (capturing name + price dynamically) | Cart badge = 6 |
+| | | 3. Navigate to cart — remove product at position 3 (index 2) and position 5 (index 4) | 4 products remain |
+| | | 4. Validate remaining 4 products with correct names and prices | Correct products and prices displayed |
+| | | 5. Proceed to checkout — fill customer information | Form accepted |
+| | | 6. Overview — validate subtotal = Σ remaining product prices, total = subtotal + tax | Math validation passes for 4 products |
+| | | 7. Finish order | *"Thank you for your order!"* confirmation |
+
+---
+
+## Page Objects
+
+| File | Responsibility |
+|---|---|
+| `login_page.ts` | `goto()`, `login()`, `expectError()` |
+| `inventory_page.ts` | `expectLoaded()`, `addAllProductsToCart()`, `expectCartCount()`, `goToCart()` |
+| `cart_page.ts` | `expectLoaded()`, `expectProductsWithPrices()`, `removeProductByName()`, `proceedToCheckout()` |
+| `checkout_step_one_page.ts` | `expectLoaded()`, `fillInformation()`, `clickContinueButton()` |
+| `checkout_step_two_page.ts` | `expectLoaded()`, `expectItemCount()`, `expectTotalsMatchProducts()`, `finishOrder()` |
+| `checkout_complete_page.ts` | `expectOrderConfirmed()` |
+
+---
+
 ## Design decisions
+
+**Environment variables** — credentials and base URL are loaded from `.env` via `process.env`, keeping sensitive data out of the codebase and making the suite configurable across environments.
+
+**Dynamic data capture** — product names and prices are captured on the inventory page via `addAllProductsToCart()` and propagated to cart and checkout assertions. No hardcoded product data — the test detects any inconsistency between pages automatically.
+
+**Math validation** — `expectTotalsMatchProducts()` validates that `subtotal = Σ selected product prices` and `total = subtotal + tax`, catching pricing bugs that a simple text check would miss.
+
+**Product removal by name** — `removeProductByName()` finds the cart row by the product's captured name, making the removal independent of DOM position and resilient to reordering.
+
+**`[data-test="…"]` selectors** — the most stable attribute on SauceDemo, decoupled from CSS classes and element hierarchy.
+
+**`beforeEach` hook** — navigates to the login page before each test, ensuring a clean state without relying on shared session state between tests.
 
 **`uniqueId()` factory** — generates unique numeric IDs per run using `Date.now()` to avoid collisions on the shared public demo server.
 
