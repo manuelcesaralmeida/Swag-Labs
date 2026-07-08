@@ -127,3 +127,32 @@ test.describe('DELETE /user/{username} - deleteUser', () => {
   });
   
 });
+
+
+test.describe('GET /user/login - loginUser', () => {
+ 
+  test('TC-USER-10: Valid login -> 200 + X-Rate-Limit + X-Expires-After headers', async ({ request }) => {
+    
+    const user = buildUser();
+    await request.post(`${baseUrlApi}/user`, { data: user });
+
+    const res = await request.get(`${baseUrlApi}/user/login`, {
+      params: { username: user.username!, password: user.password! },
+    });
+    expect(res.status()).toBe(200);
+ 
+    // swagger declares these response headers explicitly
+    const headers = res.headers();
+    expect(headers).toHaveProperty('x-rate-limit');
+    expect(headers).toHaveProperty('x-expires-after');
+ 
+    const body = await res.text();
+    expect(body).toContain('logged in user session');
+  });
+ 
+  test('TC-USER-11: missing required params -> 400 or demo 200', async ({ request }) => {
+    const res = await request.get(`${baseUrlApi}/user/login`);
+    expect([200, 400]).toContain(res.status());
+  });
+
+});
